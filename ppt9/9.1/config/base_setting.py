@@ -1,7 +1,7 @@
 # 公共配置文件
 
 # 为true会打印log
-DEBUG = True
+DEBUG = False
 
 # 为true会打印sql语句
 SQLALCHEMY_ECHO = False
