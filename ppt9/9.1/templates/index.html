@@ -1,0 +1,24 @@
+{% extends "common/layout.html"%}
+
+
+{% block content %}
+
+  <h1>i love python {{name}}</h1>
+  <h1>
+    {% if user %}
+    {{user.name}}联系QQ：{{user.qq}}
+    <a href={{user.home_page}}>主页：{{user.home_page}}</a>
+    {% endif %}
+    {% for num in num_list %}
+    {{num}}
+    {% endfor %}
+
+    <h1>flask 查询数据库</h1>
+    <p>
+      {% for item in result %}
+      {{item['User']}}
+      {% endfor %}
+    </p>
+  </h1>
+
+{% endblock %}

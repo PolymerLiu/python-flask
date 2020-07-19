@@ -4,7 +4,7 @@
 # 安装依赖
 # pip install -r requirement.txt
 
-# 通过数据库的表去创建Model
+
 pip install flask-sqlacodegen
 用法
 flask-sqlacodegen "mysql://root:python123456@127.0.0.1/mysql" --tables user --outfile "common/models/user.py" --flask
