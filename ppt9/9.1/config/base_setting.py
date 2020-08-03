@@ -15,3 +15,9 @@ SQLALCHEMY_DATABASE_URI = "mysql://root:python123456@127.0.0.1/movie_cat"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 SECRET_KEY = 'python'
+
+DOMAIN = {
+  'www': 'http://localhost:5000'
+}
+
+RELEASE_PATH = 'ppt9/9.1/release_version'
