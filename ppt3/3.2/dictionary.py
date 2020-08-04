@@ -8,10 +8,10 @@ if __name__ == '__main__':
   dict['first'] = 1
   dict[2] = '2'
 
-  tinydict = {'name':'jeffrey','age':18,'sex':'man'}
+  tinydict = {'name': 'jeffrey', 'age': 18, 'sex': 'man'}
 
   print(dict['first'])
   print(dict[2])
 
-  print(tinydict.keys())  #输出所有的key
-  print(tinydict.values())  #输出所有的值
+  print(tinydict.keys())  # 输出所有的key
+  print(tinydict.values())  # 输出所有的值

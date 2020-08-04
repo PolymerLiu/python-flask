@@ -15,7 +15,6 @@ db = SQLAlchemy(app)
 # 传入flask去初始化一个manager
 manager = Manager(app)
 
-
 app.config.from_pyfile("config/base_setting.py")
 # ops_config=local|production
 # Linux export ops_config=production

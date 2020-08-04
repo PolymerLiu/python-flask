@@ -15,14 +15,17 @@
 
 # 函数装饰器
 def logging(func):
-  def inner(*args,**kwargs):
-    print('debug %s is running' %func.__name__)
-    return func(*args,**kwargs)
+  def inner(*args, **kwargs):
+    print('debug %s is running' % func.__name__)
+    return func(*args, **kwargs)
+
   return inner
+
 
 @logging
 def bar():
   print('im a bar')
+
 
 @logging
 def bar2():
@@ -33,4 +36,3 @@ def bar2():
 bar()
 # bar2 = logging(bar2)
 bar2()
-

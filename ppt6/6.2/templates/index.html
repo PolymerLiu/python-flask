@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-  <h1>i love python {{name}}</h1>
-  <h1>
+<h1>i love python {{ name }}</h1>
+<h1>
     {% if user %}
-    {{user.name}}联系QQ：{{user.qq}}
-    <a href={{user.home_page}}>主页：{{user.home_page}}</a>
+        {{ user.name }}联系QQ：{{ user.qq }}
+        <a href={{ user.home_page }}>主页：{{ user.home_page }}</a>
     {% endif %}
     <p>
-      {% for num in num_list %}
-      <p>{{num}}</p>
-      {% endfor %}
+        {% for num in num_list %}
+            <p>{{ num }}</p>
+        {% endfor %}
     </p>
-    
-  </h1>
+
+</h1>
 </body>
 </html>
