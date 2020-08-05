@@ -4,12 +4,12 @@ pip install flask-sqlacodegen
 flask-sqlacodegen "mysql://root:python123456@127.0.0.1/movie_cat" --tables user --outfile "common/models/user.py" --flask
 
 
-
+创建数据库
 CREATE DATABASE `movie_cat`CHARACTER SET utf8mb4 COLLATE utf8mb4_bin; 
-CREATE TABLE `movie_cat`.`user`( `id` INT(11) NOT NULL COMMENT '主键', PRIMARY KEY (`id`) ) ENGINE=INNODB CHARSET=utf8mb4 COLLATE=utf8mb4_bin; 
 
+创建表
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL COMMENT '主键',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `nickname` varchar(30) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '昵称',
   `login_name` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '登录用户名',
   `login_pwd` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '登录密码',
@@ -17,10 +17,9 @@ CREATE TABLE `user` (
   `status` tinyint(3) DEFAULT '0' COMMENT '状态 0：无效 1：有效',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '最后一次更新时间',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
-  PRIMARY KEY (`id`,`login_pwd`,`login_salt`),
-  KEY `uk_login_name` (`login_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
-
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_login_name` (`login_name`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin
 
 ALTER TABLE `movie_cat`.`user` ADD INDEX `uk_login_name` (`login_name`);
 
