@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, render_template
 from common.models.user import User
+from common.libs.Helper import ops_render
 
 app = Flask(__name__)
 
@@ -18,4 +19,5 @@ def index():
   result = User.query.all()
   context['result'] = result
 
-  return render_template('index.html', **context)
+  # 渲染模板，并通过上下文传入你想在模板里边渲染的数据
+  return ops_render('index.html', context)
