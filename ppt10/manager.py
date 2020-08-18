@@ -3,9 +3,10 @@
 from application import app, manager
 from flask_script import Server, Command
 from www import *
+from jobs.launcher import runJob
 
 # web server
-manager.add_command("runserver", Server(host='localhost', use_debugger=True, use_reloader=False))
+manager.add_command("runserver", Server(host='localhost', use_debugger=True, use_reloader=True))
 
 
 # create table
@@ -16,8 +17,9 @@ def create_all():
   db.create_all()
 
 
-manager.add_command("createall", create_all)
+# manager.add_command("createall", create_all)
 
+manager.add_command("runjob", runJob)
 
 
 def main():
