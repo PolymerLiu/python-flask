@@ -1,5 +1,10 @@
-BeautifulSoup 使用说明
-def run(self,params):
+from flask_script import Command
+from application import app,db
+import requests
+from bs4 import BeautifulSoup
+
+class JobTask( Command ):
+  def run(self,params):
     url = "http://btbtdy2.com/btfl/dy1.html"
     res = requests.get(url)
     soup = BeautifulSoup(res.content,"html.parser")
