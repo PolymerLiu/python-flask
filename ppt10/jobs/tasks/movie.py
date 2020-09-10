@@ -1,15 +1,16 @@
 from flask_script import Command
 from application import app,db
-import requests,os,time,hashlib,json
+import requests,os,time,hashlib,json,re
 from bs4 import BeautifulSoup
 from common.libs.DateHelper import getCurrentTime
+from common.models.movie import Movie
 from urllib.parse import urlparse
 
 class JobTask( Command ):
   def __init__(self):
     self.source = "btbtdy"
     self.url = {
-      "num":3,
+      "num":4,
       "url":"http://btbtdy2.com/btfl/dy1-#d#.html",
       "path":"/tmp/%s/"%(self.source)
     }
@@ -17,8 +18,13 @@ class JobTask( Command ):
   # 第一步，获取列表list html 回来，通过解析html获取详情的url信息，根据详情的url获取详情的html
   # 第二部，解析详情的html
   def run(self,params):
+    act = params['act']
     self.date = getCurrentTime(frm="%Y%m%d")
-    self.getList()
+    if act == 'list':
+      self.getList()
+      self.parseInfo()
+    elif act == 'parse':
+      self.parseInfo()
 
   # 获取列表
   def getList(self):
@@ -28,13 +34,15 @@ class JobTask( Command ):
     path_list = path_root + "/list"
     path_info = path_root + "/info"
     path_json = path_root + "/json"
+    path_vid = path_root + "/vid"
     self.makeSuredirs(path_root)
     self.makeSuredirs(path_list)
     self.makeSuredirs(path_info)
     self.makeSuredirs(path_json)
+    self.makeSuredirs(path_vid)
 
     # 获取的页码
-    pages = range(1,config['num']+1)
+    pages = range(0,config['num']+1)
     # 获取列表的信息
     for ind in pages:
       # 列表路径
@@ -59,6 +67,7 @@ class JobTask( Command ):
       for item in items_data:
         tmp_json_path = path_json + '/' + item['hash']
         tmp_info_path = path_info + '/' + item['hash']
+        tmp_vid_path = path_vid + '/' + item['hash']
         if not os.path.exists(tmp_json_path):
           self.saveContent(tmp_json_path,json.dumps(item,ensure_ascii=False))
         # 存储影视的详情信息
@@ -66,7 +75,12 @@ class JobTask( Command ):
           tmp_content = self.getHttpContent(item['url'])
           self.saveContent(tmp_info_path,tmp_content)
 
-        time.sleep(0.3)
+        # 存储影视下载页面的信息(获取HTML失败返回空)
+        if not os.path.exists(tmp_vid_path):
+          tmp_content = self.getHttpContent(item['vid_url'])
+          self.saveContent(tmp_vid_path,tmp_content)
+
+        time.sleep(0.1)
 
       # app.logger.info("tmp_content ：",tmp_content)
 
@@ -87,15 +101,74 @@ class JobTask( Command ):
       if 'http:' not in tmp_href:
         tmp_href = url_domain + tmp_href
 
+      tmp_vid_url = tmp_href.replace('btdy/dy','vidlist/')
+
       tmp_data = {
         'name':tmp_name,
         'url':tmp_href,
+        'vid_url':tmp_vid_url,
         'hash':hashlib.md5(tmp_href.encode('utf-8')).hexdigest(),
       }
       data.append(tmp_data)
 
     # print("data ：",data)
     return data
+
+  # 解析详情信息
+  def parseInfo(self):
+    config = self.url
+    path_root=config['path'] + self.date
+    path_info = path_root + "/info"
+    path_json = path_root + "/json"
+    for filename in os.listdir(path_info):
+      tmp_json_path = path_json + '/' + filename
+      tmp_info_path = path_info + '/' + filename
+      tmp_data = json.loads(self.getContent(tmp_json_path), encoding='utf-8')
+      # 获取到详情页的HTML信息
+      tmp_content = self.getContent(tmp_info_path)
+      tmp_soup = BeautifulSoup(str(tmp_content),'html.parser')
+      try:
+        tmp_pub_date = tmp_soup.select('div.vod .vod_intro dl dd')[0].getText()
+        tmp_desc = tmp_soup.select('div.vod .vod_intro .des')[0].getText()
+        tmp_classify = tmp_soup.select('div.vod .vod_intro dl dd')[2].getText()
+        tmp_actor = tmp_soup.select('div.vod .vod_intro dl dd')[6].getText()
+        tmp_pic_list = tmp_soup.select('div.vod .vod_img img')
+        tmp_pics = []
+        for tmp_pic in tmp_pic_list:
+          tmp_pics.append(tmp_pic['src'])
+          break
+
+
+        # 获取下载地址
+        tmp_download_url = tmp_data['url'].replace('btdy/dy','vidlist/')
+        
+        if tmp_pics:
+          tmp_data['cover_pic'] = tmp_pics[0]
+        
+        tmp_data['pub_date'] = tmp_pub_date
+        tmp_data['desc'] = tmp_desc
+        tmp_data['classify'] = tmp_classify
+        tmp_data['actor'] = tmp_actor
+        tmp_data['magnet_url'] = tmp_download_url
+        tmp_data['source'] = self.source
+        tmp_data['created_time'] = tmp_data['update_time'] = getCurrentTime()
+
+        # print("tmp_data ：",tmp_data)
+        # 存储前先查询是否有此条数据
+        tmp_movie_info = Movie.query.filter_by(hash=tmp_data['hash']).first()
+        if tmp_movie_info:
+          continue
+        tmp_model_movie = Movie(**tmp_data)
+        db.session.add(tmp_model_movie)
+        db.session.commit()
+
+      except:
+        pass
+
+    return True
+        
+
+      
 
   # 获取文件内容
   def getContent(self,path):
