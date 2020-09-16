@@ -1,0 +1,52 @@
+{% extends "common/layout.html" %}
+
+
+{% block content %}
+
+<div class="row">
+  <div class="page-header col-md-12">
+    <h1>{{info.name | safe}} <a class="pull-right" href="{{buildUrl('/')}}">返回列表</a></h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-4">
+    <img src="{{info.cover_pic | safe}}" class="img-thumbnail">
+  </div>
+  <div class="col-lg-8">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <p>更新：{{info.pub_date | safe}}</p>
+        <p>类型：{{info.classify | safe}}</p>
+        <p>主演：{{info.actor | safe}}</p>
+        <p>{{info.desc | safe}}</p>
+        <p>下载地址：{{info.magnet_url | safe}}</p>
+        <p>原地址：<a href="{{info.url | safe}}" target="_blank">{{info.url | safe}}</a></p>
+      </div>
+
+      <!-- List group -->
+      <ul class="list-group">
+        <li class="list-group-item">随机推荐</li>
+        <li class="list-group-item">
+          <div class="row">
+            
+            {% if recommend_list %}
+            {% for item in recommend_list %}
+            <div class="col-lg-3">
+              <a class="thumbnail" target="_blank" href="{{ '%s?id=%s' | format(buildUrl('/info'),item.id)}}">
+                <img src="{{item.cover_pic | safe}}" style="width:100%;height:150px">
+                <div class="caption">
+                  <h3 style="overflow:hidden;text-overflow:ellipsis;white-space: nowrap;">{{item.name | safe}}</h3>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
