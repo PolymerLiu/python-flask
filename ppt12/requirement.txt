@@ -6,3 +6,4 @@ flask_debugtoolbar
 apscheduler
 requests
 BeautifulSoup4
+uwsgi
