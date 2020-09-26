@@ -1,4 +1,5 @@
 # 启动文件
+#  python manager.py runjob -m movie -a list
 
 from application import app, manager
 from flask_script import Server, Command
